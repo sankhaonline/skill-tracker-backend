@@ -1,0 +1,90 @@
+server:
+  port: 4000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
+  endpoint:
+    gateway:
+      enabled: true # default value
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: login
+          uri: http://localhost:5002/oauth/token
+          predicates:
+            - Path=/oauth/token
+
+        - id: userCmdApi-RegisterUser
+          uri: http://localhost:5000/signup/registerUser
+          predicates:
+            - Path=/signup/registerUser
+
+        - id: userCmdApi-CreateUser
+          uri: http://localhost:5000/api/v1/user/createUser
+          predicates:
+            - Path=/api/v1/user/createUser
+
+        - id: userCmdApi-UpdateUser
+          uri: http://localhost:5000/api/v1/user/updateUser/**
+          predicates:
+            - Path=/api/v1/user/updateUser/**
+
+        - id: userCmdApi-RemoveUser
+          uri: http://localhost:5000/api/v1/user/removeUser/**
+          predicates:
+            - Path=/v1/user/removeUser/**
+
+        - id: userQueryApi-GetAllUser
+          uri: http://localhost:5001/api/v1/user/
+          predicates:
+            - Path=/api/v1/user/
+
+        - id: userQueryApi-FindUserByName
+          uri: http://localhost:5001/api/v1/user/name
+          predicates:
+            - Path=/api/v1/user/name
+
+        - id: skillTrackerCmdApi-AddProfile
+          uri: http://localhost:5000/skill-tracker/api/v1/engineer/add-profile
+          predicates:
+            - Path=/skill-tracker/api/v1/engineer/add-profile
+
+        - id: skillTrackerCmdApi-UpdateProfile
+          uri: http://localhost:5000/skill-tracker/api/v1/engineer/update-profile/**
+          predicates:
+            - Path=/skill-tracker/api/v1/engineer/update-profile/**
+
+        - id: skillTrackerCmdApi-DeleteProfile
+          uri: http://localhost:5000/skill-tracker/api/v1/engineer/update-profile/**
+          predicates:
+            - Path=/skill-tracker/api/v1/engineer/delete-profile/**
+
+        - id: skillTrackerCmdApi-RestoreReadDb
+          uri: http://localhost:5000/api/v1/restoreReadDb
+          predicates:
+            - Path=/api/v1/restoreReadDb
+
+        - id: skillTrackerQueryApi-GetAllProfile
+          uri: http://localhost:5001/skill-tracker/api/v1/admin
+          predicates:
+            - Path=/skill-tracker/api/v1/admin
+
+        - id: skillTrackerQueryApi-GetProfileByCriteria
+          uri: http://localhost:5001/skill-tracker/api/v1/admin/**
+          predicates:
+            - Path=/skill-tracker/api/v1/admin/**
+
+        - id: cmd actuator
+          uri: http://localhost:5001/actuator/**
+          predicates:
+            - Path=/actuator
+
+        - id: swagger-ui
+          uri: http://localhost:5001/swagger-ui/**
+          predicates:
+            - Path=/swagger-ui

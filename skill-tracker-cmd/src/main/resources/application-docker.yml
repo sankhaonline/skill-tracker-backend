@@ -1,0 +1,28 @@
+server:
+  port: 6000
+
+spring:
+  data:
+    mongodb:
+      host: mongo-container
+      port: 27017
+      database: skillTracker
+  kafka:
+    producer:
+      bootstrap-servers: kafka-container:19092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-value: skilltrackerSigningKey

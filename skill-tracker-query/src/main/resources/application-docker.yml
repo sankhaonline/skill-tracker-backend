@@ -1,0 +1,36 @@
+server:
+  port: 6001
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://mysql-container:3306/employee?createDatabaseIfNotExist=true
+    username: root
+    password: skilltrackerRootPsw
+  kafka:
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+    consumer:
+      bootstrap-servers: kafka-container:19092
+      group-id: skillTrackerConsumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-value: skilltrackerSigningKey

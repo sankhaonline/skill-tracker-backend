@@ -1,0 +1,80 @@
+server:
+  port: 2000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
+  endpoint:
+    gateway:
+      enabled: true # default value
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: login
+          uri: http://user-oauth2-api:6002/oauth/token
+          predicates:
+            - Path=/oauth/token
+
+        - id: userCmdApi-RegisterUser
+          uri: http://skill-tracker-cmd-api:6000/signup/registerUser
+          predicates:
+            - Path=/signup/registerUser
+
+        - id: userCmdApi-CreateUser
+          uri: http://skill-tracker-cmd-api:6000/api/v1/user/createUser
+          predicates:
+            - Path=/api/v1/user/createUser
+
+        - id: userCmdApi-UpdateUser
+          uri: http://skill-tracker-cmd-api:6000/api/v1/user/updateUser/**
+          predicates:
+            - Path=/api/v1/user/updateUser/**
+
+        - id: userCmdApi-RemoveUser
+          uri: http://skill-tracker-cmd-api:6000/api/v1/user/removeUser/**
+          predicates:
+            - Path=/api/v1/user/removeUser/**
+
+        - id: userQueryApi
+          uri: http://skill-tracker-query-api:6001/api/v1/user/
+          predicates:
+            - Path=/api/v1/user/
+
+        - id: userQueryApi-FindUserByName
+          uri: http://skill-tracker-query-api:6001/api/v1/user/name
+          predicates:
+            - Path=/api/v1/user/name
+
+        - id: skillTrackerCmdApi-AddProfile
+          uri: http://skill-tracker-cmd-api:6000/skill-tracker/api/v1/engineer/add-profile
+          predicates:
+            - Path=/skill-tracker/api/v1/engineer/add-profile
+
+        - id: skillTrackerCmdApi-UpdateProfile
+          uri: http://skill-tracker-cmd-api:6000/skill-tracker/api/v1/engineer/update-profile/**
+          predicates:
+            - Path=/skill-tracker/api/v1/engineer/update-profile/**
+
+        - id: skillTrackerCmdApi-DeleteProfile
+          uri: http://skill-tracker-cmd-api:6000/skill-tracker/api/v1/engineer/delete-profile/**
+          predicates:
+            - Path=/skill-tracker/api/v1/engineer/delete-profile/**
+
+        - id: skillTrackerCmdApi-RestoreReadDb
+          uri: http://skill-tracker-cmd-api:6000/api/v1/restoreReadDb
+          predicates:
+            - Path=/api/v1/restoreReadDb
+
+        - id: skillTrackerQueryApi-GetAllProfile
+          uri: http://skill-tracker-query-api:6001/skill-tracker/api/v1/admin
+          predicates:
+            - Path=/skill-tracker/api/v1/admin
+
+        - id: skillTrackerQueryApi-GetProfileByCriteria
+          uri: http://skill-tracker-query-api:6001/skill-tracker/api/v1/admin/**
+          predicates:
+            - Path=/skill-tracker/api/v1/admin/**

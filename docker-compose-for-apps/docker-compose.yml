@@ -1,0 +1,46 @@
+services:
+
+  user-oauth2-api:
+    container_name: user-oauth2-api
+    image: sankhaonline/user-oauth2-api:latest
+    hostname: user-oauth2-api
+    restart: always
+    ports:
+      - 6002:6002
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+  skill-tracker-cmd-api:
+    container_name: skill-tracker-cmd-api
+    image: sankhaonline/skill-tracker-cmd-api:latest
+    hostname: skill-tracker-cmd-api
+    restart: always
+    ports:
+      - 6000:6000
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      
+  skill-tracker-query-api:
+    container_name: skill-tracker-query-api
+    image: sankhaonline/skill-tracker-query-api:latest
+    hostname: skill-tracker-query-api
+    restart: always
+    ports:
+      - 6001:6001
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      
+  api-gateway:
+    container_name: api-gateway
+    image: sankhaonline/api-gateway:latest
+    hostname: api-gateway
+    restart: always
+    ports:
+      - 2000:2000
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+networks:
+  default:
+    external:
+      name: skilltrackerNet

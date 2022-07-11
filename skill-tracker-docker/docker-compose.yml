@@ -1,0 +1,104 @@
+services:
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: skilltrackerRootPsw
+    volumes:
+      - mysql_data_container:/var/lib/mysql mysql:latest
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo-container
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - mysql_data_container:/var/lib/mysql mysql:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper-container
+    restart: always
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka-container
+    ports:
+      - "9092:9092"
+    restart: always
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-container:19092,EXTERNAL://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+    depends_on:
+      - zookeeper
+
+  user-oauth2-api:
+    container_name: user-oauth2-api
+    image: sankhaonline/skill-tracker/user-oauth2-api:latest
+    hostname: user-oauth2-api
+    restart: always
+    ports:
+      - 6002:6002
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+  skill-tracker-cmd-api:
+    container_name: skill-tracker-cmd-api
+    image: sankhaonline/skill-tracker/skill-tracker-cmd-api:latest
+    hostname: skill-tracker-cmd-api
+    restart: always
+    ports:
+      - 6000:6000
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+  skill-tracker-query-api:
+    container_name: skill-tracker-query-api
+    image: sankhaonline/skill-tracker/skill-tracker-query-api:latest
+    hostname: skill-tracker-query-api
+    restart: always
+    ports:
+      - 6001:6001
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+  api-gateway:
+    container_name: api-gateway
+    image: sankhaonline/skill-tracker/api-gateway:latest
+    hostname: api-gateway
+    restart: always
+    ports:
+      - 2000:2000
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+  mysql:
+    driver: local
+
+networks:
+  default:
+    external:
+      name: skilltrackerNet
